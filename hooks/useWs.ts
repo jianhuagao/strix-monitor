@@ -1,3 +1,4 @@
+import cfg from '@/app.config';
 import { logger } from '@/utils/logger';
 import { moment } from '@/utils/moment';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -10,7 +11,7 @@ export const useWs = () => {
   const [data, setDate] = useState<Aida64>();
 
   const connect = useCallback(() => {
-    ws.current = new WebSocket('ws://localhost:8080');
+    ws.current = new WebSocket(`ws://localhost:${cfg.wssPort}`);
 
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data) as Aida64;

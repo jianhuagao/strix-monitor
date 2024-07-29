@@ -1,11 +1,18 @@
 'use client';
 
+import cfg from '@/app.config';
 import IntelCoreI9SVG from '@/assets/cpu/intel-core-i9.svg';
 import NvidiaRtxSVG from '@/assets/gpu/nvidia-rtx.svg';
 import RogSVG from '@/assets/mb/rog.svg';
 import { useWs } from '@/hooks/useWs';
-import { keepDigit, keepIntNumberStringDigit } from '@/utils/math';
+import { keepIntNumberStringDigit } from '@/utils/math';
 import { moment } from '@/utils/moment';
+import {
+  cpuClockFunc,
+  gpuClockFunc,
+  gpuMemoryUsageFunc,
+  usedMemoryFunc,
+} from '@/utils/unitTransform';
 import { useMemo, type FunctionComponent } from 'react';
 import Group from './_Group';
 import PercentageUnit from './_PercentageUnit';
@@ -19,36 +26,19 @@ const ThemeDigit: FunctionComponent = () => {
   const { data } = useWs();
 
   const cpuClock = useMemo(() => {
-    const clock = Number(data?.SCPUCLK.value) / 1024;
-
-    return isNaN(clock) ? undefined : String(keepDigit(clock, 2));
+    return cpuClockFunc(data?.SCPUCLK.value);
   }, [data?.SCPUCLK.value]);
 
   const gpuClock = useMemo(() => {
-    const clock = Number(data?.SGPU1CLK.value) / 1024;
-
-    return isNaN(clock) ? undefined : String(keepDigit(clock, 2));
+    return gpuClockFunc(data?.SGPU1CLK.value);
   }, [data?.SGPU1CLK.value]);
 
   const gpuMemoryUsage = useMemo(() => {
-    const used = Number(data?.SGPU1USEDDEMEM.value) / 1024;
-    const usage = (Number(data?.SGPU1USEDDEMEM.value) / (24 * 1024)) * 100;
-
-    return {
-      used: isNaN(used) ? undefined : String(keepDigit(used, 1)),
-      usage: isNaN(usage) ? undefined : String(usage),
-    };
+    return gpuMemoryUsageFunc(data?.SGPU1USEDDEMEM.value);
   }, [data?.SGPU1USEDDEMEM.value]);
 
   const usedMemory = useMemo(() => {
-    const used = Number(data?.SUSEDMEM.value);
-    const free = Number(data?.SFREEMEM.value);
-    const total = (used + free) / 1024;
-
-    return {
-      total: isNaN(total) ? undefined : String(keepDigit(total, 1)),
-      used: isNaN(used) ? undefined : String(keepDigit(used / 1024, 1)),
-    };
+    return usedMemoryFunc(data?.SFREEMEM.value, data?.SUSEDMEM.value);
   }, [data?.SFREEMEM.value, data?.SUSEDMEM.value]);
 
   const clock = useMemo(
@@ -58,7 +48,7 @@ const ThemeDigit: FunctionComponent = () => {
 
   return (
     <>
-      <div className="flex h-screen flex-row gap-3 bg-black p-3">
+      <div className="flex h-screen select-none flex-row gap-3 bg-black p-3">
         {/* CPU */}
         <Group
           normaFactors={[
@@ -77,21 +67,21 @@ const ThemeDigit: FunctionComponent = () => {
               unit: 'RPM',
               label: 'AIO Fan',
             },
-            {
-              number: data?.FAIOPUMP.value,
-              unit: 'RPM',
-              label: 'AIO Bump',
-            },
-            {
-              number: keepIntNumberStringDigit(data?.PCPU.value),
-              unit: 'W',
-              label: 'CPU Power',
-            },
+            // {
+            //   number: data?.FAIOPUMP.value,
+            //   unit: 'RPM',
+            //   label: 'AIO Bump',
+            // },
+            // {
+            //   number: keepIntNumberStringDigit(data?.PCPU.value),
+            //   unit: 'W',
+            //   label: 'CPU Power',
+            // },
           ]}
           specialFactor={{
             number: data?.TCPU.value,
             unit: <TemperatureUnit />,
-            label: '13th Gen Intel(R) Core(TM) i9-13900K',
+            label: cfg.systemInfo.cpuName,
           }}
           logo={<IntelCoreI9SVG {...SVGProps} />}
         />
@@ -109,27 +99,27 @@ const ThemeDigit: FunctionComponent = () => {
               unit: <PercentageUnit />,
               label: 'GPU Utilization',
             },
-            {
-              number: data?.FGPU1.value,
-              unit: 'RPM',
-              label: 'GPU Fan',
-            },
+            // {
+            //   number: data?.FGPU1.value,
+            //   unit: 'RPM',
+            //   label: 'GPU Fan',
+            // },
             {
               number: keepIntNumberStringDigit(gpuMemoryUsage.usage, 1),
               unit: '%',
               label: 'GPU MEM Usage',
               total: `${gpuMemoryUsage.used} / 24 Gb`,
             },
-            {
-              number: keepIntNumberStringDigit(data?.PGPU1.value),
-              unit: 'W',
-              label: 'GPU Power',
-            },
+            // {
+            //   number: keepIntNumberStringDigit(data?.PGPU1.value),
+            //   unit: 'W',
+            //   label: 'GPU Power',
+            // },
           ]}
           specialFactor={{
-            number: data?.TGPU1.value,
+            number: data?.DGPU1.value,
             unit: <TemperatureUnit />,
-            label: 'ROG Strix RTX4090 24G Gaming',
+            label: cfg.systemInfo.gpuName,
           }}
           logo={<NvidiaRtxSVG {...SVGProps} />}
         />
@@ -171,7 +161,7 @@ const ThemeDigit: FunctionComponent = () => {
           specialFactor={{
             number: data?.TMOBO.value,
             unit: <TemperatureUnit />,
-            label: 'ROG Strix Z790-A Gaming WiFi',
+            label: cfg.systemInfo.motherBoardName,
           }}
           logo={<RogSVG {...SVGProps} />}
         />
