@@ -7,8 +7,10 @@ const flag = '[ws]';
 
 export const useWs = () => {
   const ws = useRef<WebSocket>();
-
-  const [data, setDate] = useState<Aida64>();
+  const [data, setData] = useState<Aida64>();
+  const [isConnected, setIsConnected] = useState(false); // 连接状态管理
+  const reconnectAttempts = useRef(0); // 使用 useRef 来保存重连次数
+  const maxReconnectAttempts = 5; // 最大重连次数
 
   const connect = useCallback(() => {
     ws.current = new WebSocket(`ws://localhost:${cfg.wssPort}`);
@@ -20,26 +22,39 @@ export const useWs = () => {
         sensor: data.STIME.value,
         data,
       });
-      setDate(data);
+      setData(data);
     };
 
     ws.current.onopen = () => {
       logger.success(flag, 'connected');
+      setIsConnected(true);
+      reconnectAttempts.current = 0; // 重置重连计数
     };
 
     ws.current.onerror = (error) => {
       logger.error(flag, error);
-      ws.current?.close();
+      // 可以在这里添加更多的错误处理逻辑
     };
 
     ws.current.onclose = (event) => {
       logger.warn(flag, 'close', event.code, event.reason);
-      logger.info(flag, 'reconnecting');
-      connect();
+      setIsConnected(false);
+      if (reconnectAttempts.current < maxReconnectAttempts) {
+        reconnectAttempts.current++;
+        logger.info(flag, `reconnecting attempt ${reconnectAttempts.current}`);
+        setTimeout(connect, 1000); // 延迟重连
+      } else {
+        logger.error(flag, 'max reconnect attempts reached');
+      }
     };
   }, []);
 
-  useEffect(connect, [connect]);
+  useEffect(() => {
+    connect();
+    return () => {
+      ws.current?.close(); // 组件卸载时关闭连接
+    };
+  }, [connect]);
 
-  return { data };
+  return { data, isConnected }; // 返回连接状态
 };
