@@ -22,9 +22,9 @@ const config: AppConfig = {
     themeColor: '#000000',
   },
   systemInfo: {
-    cpuName: '13th Gen Intel(R) Core(TM) i9-13900K',
-    gpuName: 'ROG Strix RTX4090 24G Gaming',
-    motherBoardName: 'ROG Strix Z790-A Gaming WiFi',
+    cpuName: '13th Gen Intel(R) Core(TM) i5-13600KF',
+    gpuName: 'RTX4070ti 16G Gaming',
+    motherBoardName: 'ROG Strix B760 Gaming WiFi',
   },
 };
 

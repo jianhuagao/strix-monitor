@@ -67,16 +67,16 @@ const ThemeDigit: FunctionComponent = () => {
               unit: 'RPM',
               label: 'AIO Fan',
             },
-            // {
-            //   number: data?.FAIOPUMP.value,
-            //   unit: 'RPM',
-            //   label: 'AIO Bump',
-            // },
-            // {
-            //   number: keepIntNumberStringDigit(data?.PCPU.value),
-            //   unit: 'W',
-            //   label: 'CPU Power',
-            // },
+            {
+              number: data?.FAIOPUMP.value,
+              unit: 'RPM',
+              label: 'AIO Bump',
+            },
+            {
+              number: keepIntNumberStringDigit(data?.PCPUPKG.value),
+              unit: 'W',
+              label: 'CPU Power',
+            },
           ]}
           specialFactor={{
             number: data?.TCPU.value,
@@ -99,22 +99,22 @@ const ThemeDigit: FunctionComponent = () => {
               unit: <PercentageUnit />,
               label: 'GPU Utilization',
             },
-            // {
-            //   number: data?.FGPU1.value,
-            //   unit: 'RPM',
-            //   label: 'GPU Fan',
-            // },
+            {
+              number: data?.FGPU1.value,
+              unit: 'RPM',
+              label: 'GPU Fan',
+            },
             {
               number: keepIntNumberStringDigit(gpuMemoryUsage.usage, 1),
               unit: '%',
               label: 'GPU MEM Usage',
               total: `${gpuMemoryUsage.used} / 24 Gb`,
             },
-            // {
-            //   number: keepIntNumberStringDigit(data?.PGPU1.value),
-            //   unit: 'W',
-            //   label: 'GPU Power',
-            // },
+            {
+              number: keepIntNumberStringDigit(data?.PGPU1.value),
+              unit: 'W',
+              label: 'GPU Power',
+            },
           ]}
           specialFactor={{
             number: data?.DGPU1.value,
@@ -153,10 +153,10 @@ const ThemeDigit: FunctionComponent = () => {
               unit: 'Kb/s',
               label: 'Download Speed',
             },
-            // {
-            //   number: data?.SPRIIPADDR.value,
-            //   label: 'Intranet IP',
-            // },
+            {
+              number: data?.SPRIIPADDR.value,
+              label: 'Intranet IP',
+            },
           ]}
           specialFactor={{
             number: data?.TMOBO.value,
