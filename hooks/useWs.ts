@@ -13,7 +13,8 @@ export const useWs = () => {
   const maxReconnectAttempts = 5; // 最大重连次数
 
   const connect = useCallback(() => {
-    ws.current = new WebSocket(`ws://localhost:${cfg.wssPort}`);
+    const ip = window.location.hostname;
+    ws.current = new WebSocket(`ws://${ip}:${cfg.wssPort}`);
 
     ws.current.onmessage = (event) => {
       const data = JSON.parse(event.data) as Aida64;
