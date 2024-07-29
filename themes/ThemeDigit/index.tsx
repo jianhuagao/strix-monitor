@@ -111,13 +111,13 @@ const ThemeDigit: FunctionComponent = () => {
               total: `${gpuMemoryUsage.used} / 24 Gb`,
             },
             {
-              number: keepIntNumberStringDigit(data?.TGPU1HOT.value),
+              number: keepIntNumberStringDigit(data?.PGPU1.value),
               unit: 'W',
               label: 'GPU Power',
             },
           ]}
           specialFactor={{
-            number: data?.DGPU1.value,
+            number: data?.TGPU1HOT.value,
             unit: <TemperatureUnit />,
             label: cfg.systemInfo.gpuName,
           }}
