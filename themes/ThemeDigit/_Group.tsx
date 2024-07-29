@@ -15,6 +15,15 @@ const Group: FunctionComponent<GroupProps> = ({
   specialFactor,
   logo,
 }) => {
+  // 设置页面为全屏
+  const setFullScreen = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+      // document.documentElement.webkitRequestFullScreen()
+    }
+  };
   return (
     <div className="relative flex h-full w-1/3 flex-col justify-between overflow-auto rounded-2xl border-8 border-solid border-gray-400 bg-slate-300">
       <div className="mt-3 flex flex-col gap-6">
@@ -22,7 +31,9 @@ const Group: FunctionComponent<GroupProps> = ({
           <NormalFactor key={index} {...factor} />
         ))}
       </div>
-      <div className="absolute right-0 top-0">{logo}</div>
+      <div className="absolute right-0 top-0" onClick={setFullScreen}>
+        {logo}
+      </div>
       <div className="flex h-full items-center justify-center">
         <SpecialFactor {...specialFactor} />
       </div>
