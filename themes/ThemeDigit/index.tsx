@@ -111,7 +111,7 @@ const ThemeDigit: FunctionComponent = () => {
               total: `${gpuMemoryUsage.used} / 24 Gb`,
             },
             {
-              number: keepIntNumberStringDigit(data?.PGPU1.value),
+              number: keepIntNumberStringDigit(data?.TGPU1HOT.value),
               unit: 'W',
               label: 'GPU Power',
             },
